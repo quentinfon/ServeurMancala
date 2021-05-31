@@ -1,5 +1,5 @@
 package ensi;
-import ensi.model.Personne;
+import ensi.model.Joueur;
 
 import java.io.*;
 
@@ -14,9 +14,9 @@ public class ServeurMessage {
 
     public static void main(String[] zero)
     {
-        ServerSocket socketserver  ;
-        Socket socketduserveur ;
-        Personne pers= new Personne();
+        ServerSocket socketserver;
+        Socket socketduserveur;
+        Joueur pers= new Joueur();
 
         try
         {

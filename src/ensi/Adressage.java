@@ -8,8 +8,8 @@ import java.net.Socket;
 public class Adressage {
     public static void main(String[] zero)
     {
-        ServerSocket socketserver  ;
-        Socket socketduserveur ;
+        ServerSocket socketserver;
+        Socket socketduserveur;
 
         try
         {
