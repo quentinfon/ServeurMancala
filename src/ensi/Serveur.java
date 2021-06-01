@@ -6,43 +6,79 @@ import java.io.*;
 import java.net.ServerSocket;
 
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Vector;
 
 
 public class Serveur {
 
+    private Vector _clients = new Vector();
+    private int _nbClients = 0;
+
     public static void main(String[] zero)
     {
-        ServerSocket socketserver;
-        Socket socketduserveur;
-        Joueur pers= new Joueur();
 
         try
         {
-            socketserver = new ServerSocket(2009);
-            System.out.println("Le ensi est à l'écoute du port "+socketserver.getLocalPort());
-            socketduserveur = socketserver.accept();
-            System.out.println("Un zéro s'est connecté");
-            OutputStream os=socketduserveur.getOutputStream();
-            ObjectOutputStream oos=new ObjectOutputStream(os);
+            Serveur serveur = new Serveur();
 
-            pers.setNom("Mon nom");
-            pers.setPrenom("Mon prénom");
-            pers.setIp("10.10.0.0");
-            pers.setPort("2009");
-            System.out.println("Données envoyées");
-            pers.afficher();
+            //TODO Add a game Thread
 
-            oos.writeObject(pers);// envoie de l'objet
+            ServerSocket socketserver = new ServerSocket(2009);
+            System.out.println("Serveur mancala sur le port : "+socketserver.getLocalPort());
 
-            socketduserveur.close();
-            socketserver.close();
-
+            while (true){
+                new ClientThread(socketserver.accept(), serveur);
+            }
         }
         catch (IOException e)
             {
                 e.printStackTrace();
             }
 
+    }
+
+
+    synchronized public void sendGame()
+    {
+        //TODO passer un objet de modelisation de la partie (Cases et nombre de pions dans chaque / score / tour du joueur)
+
+        PrintWriter out;
+        for (int i = 0; i < _clients.size(); i++)
+        {
+            out = (PrintWriter) _clients.elementAt(i);
+            if (out != null)
+            {
+                //TODO envoie de l'objet
+                out.print("Plateau du jeu");
+                out.flush();
+            }
+        }
+    }
+
+
+    synchronized public void delClient(int i)
+    {
+        _nbClients--;
+        if (_clients.elementAt(i) != null)
+        {
+            _clients.removeElementAt(i);
+        }
+    }
+
+    synchronized public int addClient(PrintWriter out)
+    {
+        _nbClients++;
+        _clients.addElement(out);
+
+        //Num du client
+        return _clients.size()-1;
+    }
+
+    //** Methode : retourne le nombre de clients connectés **
+    synchronized public int getNbClients()
+    {
+        return _nbClients; // retourne le nombre de clients connectés
     }
 
 }
