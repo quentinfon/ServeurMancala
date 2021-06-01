@@ -7,9 +7,7 @@ import java.net.ServerSocket;
 
 import java.net.Socket;
 
-/**
- * Created by faye on 01/06/2017.
- */
+
 public class ServeurMessage {
 
     public static void main(String[] zero)
