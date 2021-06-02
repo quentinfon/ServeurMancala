@@ -1,6 +1,8 @@
 package ensi.model;
 
-public class Plateau {
+import java.io.Serializable;
+
+public class Plateau implements Serializable {
 
     private int[][] cases = new int[2][6];
 

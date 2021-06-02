@@ -1,6 +1,8 @@
 package ensi.model;
 
-public class Partie {
+import java.io.Serializable;
+
+public class Partie implements Serializable {
 
     private Plateau plateau;
 
