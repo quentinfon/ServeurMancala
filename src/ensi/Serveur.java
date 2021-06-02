@@ -1,8 +1,10 @@
 package ensi;
 import ensi.model.Joueur;
+import ensi.model.Session;
 
 import java.io.*;
 
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 
 import java.net.Socket;
@@ -12,7 +14,12 @@ import java.util.Vector;
 
 public class Serveur {
 
+    //Liste des out stream de tous les clients
     private Vector _clients = new Vector();
+
+    //Liste des sessions de jeu
+    private ArrayList<Session> _sessions = new ArrayList<>();
+
     private int _nbClients = 0;
 
     public static void main(String[] zero)
@@ -26,6 +33,8 @@ public class Serveur {
 
             ServerSocket socketserver = new ServerSocket(2009);
             System.out.println("Serveur mancala sur le port : "+socketserver.getLocalPort());
+
+            new GameThread(serveur);
 
             while (true){
                 new ClientThread(socketserver.accept(), serveur);
@@ -66,10 +75,15 @@ public class Serveur {
         }
     }
 
-    synchronized public int addClient(PrintWriter out)
+    synchronized public int addClient(Socket s, Joueur joueur)
     {
         _nbClients++;
-        _clients.addElement(out);
+
+        try {
+            _clients.addElement(s.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Num du client
         return _clients.size()-1;
