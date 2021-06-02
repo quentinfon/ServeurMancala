@@ -1,5 +1,6 @@
 package ensi;
 
+import ensi.model.Commande;
 import ensi.model.Joueur;
 
 import java.io.*;
@@ -10,25 +11,27 @@ public class ClientThread implements Runnable {
     private Thread _threadClient;
     private Socket _socket; //Socket du client
     private PrintWriter _out;
+
     private InputStream _in;
+    private ObjectInputStream ois;
+
     private Serveur _serveur;
     private int _numClient=0;
     private Joueur _joueur;
 
 
-    ClientThread(Socket s, Serveur serveur) // le param s est donnée dans BlablaServ par ss.accept()
+    ClientThread(Socket s, Serveur serveur)
     {
         _serveur = serveur;
         _socket = s;
         try
         {
-            // fabrication d'une variable permettant l'utilisation du flux de sortie avec des string
+
             _out = new PrintWriter(_socket.getOutputStream());
-            // fabrication d'une variable permettant l'utilisation du flux d'entrée avec des string
             _in = _socket.getInputStream();
 
             //Recupération du joueur
-            ObjectInputStream ois=new ObjectInputStream(_in);
+            ois = new ObjectInputStream(_in);
             _joueur = (Joueur) ois.readObject();
             System.out.println("Infos du joueur : "+_joueur);
 
@@ -38,29 +41,30 @@ public class ClientThread implements Runnable {
             e.printStackTrace();
         }
 
-        _threadClient = new Thread(this); // instanciation du thread
-        _threadClient.start(); // démarrage du thread
+        _threadClient = new Thread(this);
+        _threadClient.start();
     }
 
 
     public void run()
     {
 
-        System.out.println("Un nouveau client s'est connecte, no "+_numClient);
+        System.out.println("Un nouveau client s'est connecte, numéro client : "+_numClient);
 
         try
         {
-            BufferedReader input = new BufferedReader(new InputStreamReader(_in));
-            String userInput = "";
-            while((userInput = input.readLine()) != null) // attente en boucle des messages provenant du client (bloquant sur _in.read())
+
+            while(true)
             {
-                System.out.println(userInput);
+                Commande commande = (Commande) ois.readObject();
+
+                System.out.println(commande.numToPlay);
                 //TODO Check si c'est le tour du client
                 //TODO utiliser le num de la case comme coup du joueur
 
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (IOException | ClassNotFoundException e) {
         } finally
         {
             try
