@@ -38,6 +38,7 @@ public class Serveur {
 
             while (true){
                 new ClientThread(socketserver.accept(), serveur);
+                serveur.displayServerStatus();
             }
         }
         catch (IOException e)
@@ -110,8 +111,14 @@ public class Serveur {
         for (Session session : _sessions){
             if (!session.isFull()){
                 session.addPlayer(joueur, socket);
+                return _clients.size()-1;
             }
         }
+
+        //Création d'une nouvelle session si aucune session libre
+        Session session = new Session();
+        session.addPlayer(joueur, socket);
+        _sessions.add(session);
 
         return _clients.size()-1;
     }
@@ -120,6 +127,16 @@ public class Serveur {
     synchronized public int getNbClients()
     {
         return _nbClients;
+    }
+
+    synchronized public void displayServerStatus(){
+        System.out.println("\n\n\n#############################################");
+        System.out.println(_nbClients + " connéctés");
+        System.out.println(_sessions.size() + " sessions : ");
+        for(Session s : _sessions){
+            System.out.println(s);
+        }
+        System.out.println("#############################################");
     }
 
 }

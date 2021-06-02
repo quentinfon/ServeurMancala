@@ -3,6 +3,7 @@ package ensi.model;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Session {
 
@@ -38,9 +39,12 @@ public class Session {
     }
 
     public String toString(){
-        String display = "";
-        
-        return display;
+        StringBuilder display = new StringBuilder("Joueurs dans la session : ");
+        for(var entry : joueurs.entrySet()) {
+            String uid = entry.getKey();
+            display.append("\n- ").append(uid).append(entry.getValue() != null ? " : en ligne" : " : hors ligne");
+        }
+        return display.toString();
     }
 
 }
