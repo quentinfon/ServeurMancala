@@ -66,33 +66,60 @@ public class Serveur {
     }
 
 
-    synchronized public void delClient(int i)
+    synchronized public void delClient(int i, Joueur joueur)
     {
         _nbClients--;
         if (_clients.elementAt(i) != null)
         {
             _clients.removeElementAt(i);
         }
+
+        for(Session session : _sessions){
+            if(session.hasPlayer(joueur)){
+                session.userDisconnect(joueur);
+            }
+        }
     }
 
-    synchronized public int addClient(Socket s, Joueur joueur)
+    /**
+     * Fonction d'ajout d'un client
+     * @param socket socket du client
+     * @param joueur l'objet joueur du client
+     * @return  le num du client
+     */
+    synchronized public int addClient(Socket socket, Joueur joueur)
     {
         _nbClients++;
 
+        //Ajout du client dans le broadcast du serveur
         try {
-            _clients.addElement(s.getOutputStream());
+            _clients.addElement(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //Num du client
+        //Reconnexion d'un client dans sa session
+        for(Session session : _sessions){
+            if(session.hasPlayer(joueur)){
+                session.replacePlayerSocket(joueur, socket);
+                return _clients.size()-1;
+            }
+        }
+
+        //Connexion à une session non pleine
+        for (Session session : _sessions){
+            if (!session.isFull()){
+                session.addPlayer(joueur, socket);
+            }
+        }
+
         return _clients.size()-1;
     }
 
-    //** Methode : retourne le nombre de clients connectés **
+
     synchronized public int getNbClients()
     {
-        return _nbClients; // retourne le nombre de clients connectés
+        return _nbClients;
     }
 
 }

@@ -13,6 +13,7 @@ public class ClientThread implements Runnable {
     private InputStream _in;
     private Serveur _serveur;
     private int _numClient=0;
+    private Joueur _joueur;
 
 
     ClientThread(Socket s, Serveur serveur) // le param s est donnée dans BlablaServ par ss.accept()
@@ -28,10 +29,10 @@ public class ClientThread implements Runnable {
 
             //Recupération du joueur
             ObjectInputStream ois=new ObjectInputStream(_in);
-            Joueur j = (Joueur) ois.readObject();
-            System.out.println("Infos du joueur : "+j);
+            _joueur = (Joueur) ois.readObject();
+            System.out.println("Infos du joueur : "+_joueur);
 
-            _numClient = serveur.addClient(s, j);
+            _numClient = serveur.addClient(s, _joueur);
         }
         catch (IOException e){ } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -64,8 +65,8 @@ public class ClientThread implements Runnable {
         {
             try
             {
-                System.out.println("Le client no "+_numClient+" s'est deconnecte");
-                _serveur.delClient(_numClient);
+                System.out.println("Le client "+_numClient+" s'est deconnecte");
+                _serveur.delClient(_numClient, _joueur);
                 _socket.close();
             }
             catch (IOException e){ }
