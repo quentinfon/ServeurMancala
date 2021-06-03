@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 public class Partie implements Serializable {
 
-    private Plateau plateau;
+    public Plateau plateau;
 
-    private int playerTurn;
+    public int playerTurn;
 
-    private Joueur[] joueurs = new Joueur[2];
+    public Joueur[] joueurs = new Joueur[2];
 
     public Partie(Joueur j1, Joueur j2){
         playerTurn = 0;
@@ -49,6 +49,15 @@ public class Partie implements Serializable {
 
     }
 
+    public GameData getGameData(){
+        GameData data = new GameData();
+
+        data.playerTurn = this.playerTurn;
+        data.joueurs = this.joueurs;
+        data.cases = this.plateau.getCases();
+
+        return data;
+    }
 
 
 }

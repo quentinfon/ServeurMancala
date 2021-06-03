@@ -1,5 +1,7 @@
 package ensi.model;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +10,7 @@ import java.util.Map;
 public class Session {
 
     //id joueur et socket
-    private HashMap<Joueur, Socket> joueurs = new HashMap<>();
+    private HashMap<Joueur, ObjectOutputStream> joueurs = new HashMap<>();
 
     private Partie partie;
 
@@ -23,6 +25,8 @@ public class Session {
                 j.add(entry.getKey());
             }
             partie = new Partie(j.get(0), j.get(1));
+
+            sendGameData();
         }
     }
 
@@ -30,13 +34,17 @@ public class Session {
         return joueurs.containsKey(j);
     }
 
-    public void addPlayer(Joueur j, Socket s){
-        joueurs.put(j, s);
+    public void addPlayer(Joueur j, ObjectOutputStream stream){
+        joueurs.put(j, stream);
+        sendGameData();
     }
 
-    public void replacePlayerSocket(Joueur j, Socket s){
+    public void replacePlayerSocket(Joueur j, ObjectOutputStream stream){
         if (hasPlayer(j)){
-            joueurs.put(j, s);
+            j.connected = true;
+            joueurs.put(j, stream);
+
+            sendGameData();
         }
     }
 
@@ -46,7 +54,9 @@ public class Session {
 
     public void userDisconnect(Joueur joueur){
         if (hasPlayer(joueur)){
+            joueur.connected = false;
             joueurs.put(joueur, null);
+            sendGameData();
         }
     }
 
@@ -61,9 +71,20 @@ public class Session {
 
     public void request(Commande commande, Joueur joueur){
         if(commande.action == Action.NEW_GAME){
-            partie = partie;
+            startNewGame();
         }else if(commande.action == Action.PLAY){
 
+        }
+    }
+
+    public void sendGameData(){
+        if (partie == null) return;
+        for(var entry : joueurs.entrySet()) {
+            try {
+                entry.getValue().writeObject(partie.getGameData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

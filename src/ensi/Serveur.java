@@ -31,7 +31,6 @@ public class Serveur {
             ServerSocket socketserver = new ServerSocket(2009);
             System.out.println("Serveur mancala sur le port : "+socketserver.getLocalPort());
 
-            new GameThread(serveur);
 
             while (true){
                 new ClientThread(socketserver.accept(), serveur);
@@ -59,18 +58,18 @@ public class Serveur {
 
     /**
      * Fonction d'ajout d'un client
-     * @param socket socket du client
+     * @param stream output stream du client
      * @param joueur l'objet joueur du client
      * @return  le num du client
      */
-    synchronized public Session addClient(Socket socket, Joueur joueur)
+    synchronized public Session addClient(ObjectOutputStream stream, Joueur joueur)
     {
         _nbClients++;
 
         //Reconnexion d'un client dans sa session
         for(Session session : _sessions){
             if(session.hasPlayer(joueur)){
-                session.replacePlayerSocket(joueur, socket);
+                session.replacePlayerSocket(joueur, stream);
                 return session;
             }
         }
@@ -78,14 +77,14 @@ public class Serveur {
         //Connexion à une session non pleine
         for (Session session : _sessions){
             if (!session.isFull()){
-                session.addPlayer(joueur, socket);
+                session.addPlayer(joueur, stream);
                 return session;
             }
         }
 
         //Création d'une nouvelle session si aucune session libre
         Session session = new Session();
-        session.addPlayer(joueur, socket);
+        session.addPlayer(joueur, stream);
         _sessions.add(session);
 
         return session;

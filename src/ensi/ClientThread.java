@@ -11,10 +11,9 @@ public class ClientThread implements Runnable {
 
     private Thread _threadClient;
     private Socket _socket;
-    private PrintWriter _out;
 
-    private InputStream _in;
     private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
     private Serveur _serveur;
     private Session _session;
@@ -28,16 +27,17 @@ public class ClientThread implements Runnable {
         _socket = s;
         try
         {
-
-            _out = new PrintWriter(_socket.getOutputStream());
-            _in = _socket.getInputStream();
+            oos = new ObjectOutputStream(s.getOutputStream());
 
             //Recupération du joueur
-            ois = new ObjectInputStream(_in);
+            ois = new ObjectInputStream(_socket.getInputStream());
+
             _joueur = (Joueur) ois.readObject();
+
             System.out.println("Infos du joueur : "+_joueur);
 
-            _session = serveur.addClient(s, _joueur);
+
+            _session = serveur.addClient(oos, _joueur);
         }
         catch (IOException e){ e.printStackTrace(); } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -63,6 +63,7 @@ public class ClientThread implements Runnable {
             }
 
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         } finally
         {
             try

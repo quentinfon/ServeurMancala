@@ -13,10 +13,13 @@ public class Joueur implements Serializable
     public String port;
     public ArrayList<String> action;
 
+    public boolean connected;
+
     public Joueur()
     {
         this.id = UUID.randomUUID().toString();
         this.action= new ArrayList<>();
+        this.connected = true;
     }
 
     public Joueur(String pseudo, String ip, String port)
@@ -26,6 +29,7 @@ public class Joueur implements Serializable
         this.ip=ip;
         this.port=port;
         this.action= new ArrayList<>();
+        this.connected = true;
     }
 
     public String toString()

@@ -32,4 +32,8 @@ public class Plateau implements Serializable {
         return cases[joueur][cell] > 0;
     }
 
+    public int[][] getCases(){
+        return cases;
+    }
+
 }
