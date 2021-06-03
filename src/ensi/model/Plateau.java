@@ -25,4 +25,11 @@ public class Plateau implements Serializable {
         return count;
     }
 
+    public boolean isPlayable(int joueur, int cell){
+        if(joueur != 0 && joueur != 1) return false;
+        if(cell < 0 || cell > 5) return false;
+
+        return cases[joueur][cell] > 0;
+    }
+
 }

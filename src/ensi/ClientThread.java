@@ -2,6 +2,7 @@ package ensi;
 
 import ensi.model.Commande;
 import ensi.model.Joueur;
+import ensi.model.Session;
 
 import java.io.*;
 import java.net.Socket;
@@ -9,14 +10,15 @@ import java.net.Socket;
 public class ClientThread implements Runnable {
 
     private Thread _threadClient;
-    private Socket _socket; //Socket du client
+    private Socket _socket;
     private PrintWriter _out;
 
     private InputStream _in;
     private ObjectInputStream ois;
 
     private Serveur _serveur;
-    private int _numClient=0;
+    private Session _session;
+
     private Joueur _joueur;
 
 
@@ -35,9 +37,9 @@ public class ClientThread implements Runnable {
             _joueur = (Joueur) ois.readObject();
             System.out.println("Infos du joueur : "+_joueur);
 
-            _numClient = serveur.addClient(s, _joueur);
+            _session = serveur.addClient(s, _joueur);
         }
-        catch (IOException e){ } catch (ClassNotFoundException e) {
+        catch (IOException e){ e.printStackTrace(); } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -49,8 +51,6 @@ public class ClientThread implements Runnable {
     public void run()
     {
 
-        System.out.println("Un nouveau client s'est connecte, numéro client : "+_numClient);
-
         try
         {
 
@@ -58,9 +58,7 @@ public class ClientThread implements Runnable {
             {
                 Commande commande = (Commande) ois.readObject();
 
-                System.out.println(commande.numToPlay);
-                //TODO Check si c'est le tour du client
-                //TODO utiliser le num de la case comme coup du joueur
+                _session.request(commande, _joueur);
 
             }
 
@@ -69,8 +67,8 @@ public class ClientThread implements Runnable {
         {
             try
             {
-                System.out.println("Le client "+_numClient+" s'est deconnecte");
-                _serveur.delClient(_numClient, _joueur);
+                System.out.println(_joueur.pseudo+" s'est deconnecte");
+                _serveur.delClient(_joueur);
                 _socket.close();
             }
             catch (IOException e){ }

@@ -14,9 +14,6 @@ import java.util.Vector;
 
 public class Serveur {
 
-    //Liste des out stream de tous les clients
-    private Vector _clients = new Vector();
-
     //Liste des sessions de jeu
     private ArrayList<Session> _sessions = new ArrayList<>();
 
@@ -48,38 +45,16 @@ public class Serveur {
 
     }
 
-
-    synchronized public void sendGame()
-    {
-        //TODO passer un objet de modelisation de la partie (Cases et nombre de pions dans chaque / score / tour du joueur)
-
-        PrintWriter out;
-        for (int i = 0; i < _clients.size(); i++)
-        {
-            out = (PrintWriter) _clients.elementAt(i);
-            if (out != null)
-            {
-                //TODO envoie de l'objet
-                out.print("Plateau du jeu");
-                out.flush();
-            }
-        }
-    }
-
-
-    synchronized public void delClient(int i, Joueur joueur)
+    synchronized public void delClient(Joueur joueur)
     {
         _nbClients--;
-        if (_clients.elementAt(i) != null)
-        {
-            _clients.removeElementAt(i);
-        }
 
         for(Session session : _sessions){
             if(session.hasPlayer(joueur)){
                 session.userDisconnect(joueur);
             }
         }
+
     }
 
     /**
@@ -88,22 +63,15 @@ public class Serveur {
      * @param joueur l'objet joueur du client
      * @return  le num du client
      */
-    synchronized public int addClient(Socket socket, Joueur joueur)
+    synchronized public Session addClient(Socket socket, Joueur joueur)
     {
         _nbClients++;
-
-        //Ajout du client dans le broadcast du serveur
-        try {
-            _clients.addElement(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         //Reconnexion d'un client dans sa session
         for(Session session : _sessions){
             if(session.hasPlayer(joueur)){
                 session.replacePlayerSocket(joueur, socket);
-                return _clients.size()-1;
+                return session;
             }
         }
 
@@ -111,7 +79,7 @@ public class Serveur {
         for (Session session : _sessions){
             if (!session.isFull()){
                 session.addPlayer(joueur, socket);
-                return _clients.size()-1;
+                return session;
             }
         }
 
@@ -120,7 +88,7 @@ public class Serveur {
         session.addPlayer(joueur, socket);
         _sessions.add(session);
 
-        return _clients.size()-1;
+        return session;
     }
 
 

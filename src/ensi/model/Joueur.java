@@ -56,4 +56,14 @@ public class Joueur implements Serializable
     {
         return port;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o == this) return true;
+        if (!(o instanceof Joueur)) return false;
+
+        Joueur j = (Joueur) o;
+        return j.id.equals(this.id);
+
+    }
 }
