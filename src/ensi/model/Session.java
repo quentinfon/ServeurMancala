@@ -15,7 +15,7 @@ public class Session {
     private Partie partie;
 
     public Session(){
-
+        partie = new Partie();
     }
 
     private void startNewGame(){
@@ -24,8 +24,8 @@ public class Session {
             for(var entry : joueurs.entrySet()) {
                 j.add(entry.getKey());
             }
-            partie = new Partie(j.get(0), j.get(1));
 
+            partie.startGame(j.get(0), j.get(1));
             sendGameData();
         }
     }
@@ -36,6 +36,9 @@ public class Session {
 
     public void addPlayer(Joueur j, ObjectOutputStream stream){
         joueurs.put(j, stream);
+        if (joueurs.size() == 2){
+            startNewGame();
+        }
         sendGameData();
     }
 
@@ -71,8 +74,15 @@ public class Session {
 
     public void request(Commande commande, Joueur joueur){
         if(commande.action == Action.NEW_GAME){
+
             startNewGame();
+
         }else if(commande.action == Action.PLAY){
+
+            if (partie != null){
+                partie.playTurn(joueur, commande.numToPlay);
+                sendGameData();
+            }
 
         }
     }
@@ -81,9 +91,10 @@ public class Session {
         if (partie == null) return;
         for(var entry : joueurs.entrySet()) {
             try {
+                entry.getValue().reset();
                 entry.getValue().writeObject(partie.getGameData());
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (NullPointerException | IOException e) {
+
             }
         }
     }

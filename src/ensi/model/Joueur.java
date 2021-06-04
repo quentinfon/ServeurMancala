@@ -2,6 +2,7 @@ package ensi.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -34,7 +35,7 @@ public class Joueur implements Serializable
 
     public String toString()
     {
-        return this.id + " : " + this.pseudo + " \nip : " + this.ip + " : " + this.port;
+        return this.id + " : " + this.pseudo + " - " + (connected ? " en ligne" : "hors ligne");
     }
     public void setPseudo(String pseudo)
     {
@@ -69,5 +70,10 @@ public class Joueur implements Serializable
         Joueur j = (Joueur) o;
         return j.id.equals(this.id);
 
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(id);
     }
 }

@@ -1,26 +1,26 @@
 package ensi.model;
 
-import jdk.jshell.ImportSnippet;
 
-import java.io.Serializable;
-
-public class Partie implements Serializable {
+public class Partie {
 
     public Plateau plateau;
 
     public int playerTurn;
 
     public Joueur[] joueurs = new Joueur[2];
+    public boolean started;
 
-    public Partie(Joueur j1, Joueur j2){
+    public Partie(){
         playerTurn = 0;
-
-        joueurs[0] = j1;
-        joueurs[1] = j2;
-
+        started = false;
         plateau = new Plateau();
     }
 
+    public void startGame(Joueur j1, Joueur j2){
+        joueurs[0] = j1;
+        joueurs[1] = j2;
+        started = true;
+    }
 
     public void nextPlayer(){
         playerTurn = playerTurn == 0 ? 1 : 0;
@@ -33,6 +33,7 @@ public class Partie implements Serializable {
 
 
     public void playTurn(Joueur j, int cell){
+        if(!started) return;
 
         if(j.equals(joueurs[playerTurn])){
             if (plateau.isPlayable(playerTurn, cell)){
