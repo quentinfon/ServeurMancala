@@ -18,6 +18,9 @@ public class Session {
         partie = new Partie();
     }
 
+    /**
+     * Start a new game
+     */
     private void startNewGame(){
         if(joueurs.size() >= 2){
             ArrayList<Joueur> j = new ArrayList<>();
@@ -30,11 +33,23 @@ public class Session {
         }
     }
 
+    /**
+     * Check if a player is in a session
+     * @param j the player
+     * @return true if player is in the session
+     */
     public boolean hasPlayer(Joueur j){
         return joueurs.containsKey(j);
     }
 
+
+    /**
+     * Function to add a player in a session
+     * @param j the player to add
+     * @param stream the player object output stream
+     */
     public void addPlayer(Joueur j, ObjectOutputStream stream){
+        j.connected = true;
         joueurs.put(j, stream);
         if (joueurs.size() == 2){
             startNewGame();
@@ -42,6 +57,12 @@ public class Session {
         sendGameData();
     }
 
+
+    /**
+     * Replace the player object output stream
+     * @param j the player
+     * @param stream the stream
+     */
     public void replacePlayerSocket(Joueur j, ObjectOutputStream stream){
         if (hasPlayer(j)){
             j.connected = true;
@@ -51,10 +72,19 @@ public class Session {
         }
     }
 
+    /**
+     * Check if a session is full
+     * @return true if full
+     */
     public boolean isFull(){
         return joueurs.size() >= 2;
     }
 
+
+    /**
+     * Disconnect a player from a session
+     * @param joueur the player to disconnect
+     */
     public void userDisconnect(Joueur joueur){
         if (hasPlayer(joueur)){
             joueur.connected = false;
@@ -63,15 +93,11 @@ public class Session {
         }
     }
 
-    public String toString(){
-        StringBuilder display = new StringBuilder("Joueurs dans la session : ");
-        for(var entry : joueurs.entrySet()) {
-            String uid = entry.getKey().id;
-            display.append("\n- ").append(uid).append(entry.getValue() != null ? " : en ligne" : " : hors ligne");
-        }
-        return display.toString();
-    }
-
+    /**
+     * Handle Client request
+     * @param commande the commande
+     * @param joueur the player who request the commande
+     */
     public void request(Commande commande, Joueur joueur){
         if(commande.action == Action.NEW_GAME){
 
@@ -87,16 +113,54 @@ public class Session {
         }
     }
 
+
+    /**
+     * Set session player if game is not started
+     * @return the GameData
+     */
+    public GameData getData(){
+        GameData data = partie.getGameData();
+
+        if (!partie.started){
+            ArrayList<Joueur> j = new ArrayList<>();
+            for(var player : joueurs.entrySet()) {
+                j.add(player.getKey());
+            }
+            if (j.size() >= 1)
+                data.joueurs[0] = j.get(0);
+            if(j.size() >= 2)
+                data.joueurs[1] = j.get(1);
+        }
+        return data;
+    }
+
+    /**
+     * Send the game data to all the client of the session
+     */
     public void sendGameData(){
         if (partie == null) return;
         for(var entry : joueurs.entrySet()) {
             try {
                 entry.getValue().reset();
-                entry.getValue().writeObject(partie.getGameData());
+                entry.getValue().writeObject(getData());
             } catch (NullPointerException | IOException e) {
 
             }
         }
+    }
+
+
+    /**
+     * Display of a session
+     * @return the string to display
+     */
+    public String toString(){
+        StringBuilder display = new StringBuilder("Joueurs dans la session : ");
+        for(var entry : joueurs.entrySet()) {
+            String uid = entry.getKey().id;
+            display.append("\n- ").append(uid).append(entry.getValue() != null ? " : en ligne" : " : hors ligne");
+        }
+        return display.toString();
     }
 
 }

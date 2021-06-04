@@ -1,8 +1,6 @@
 package ensi.model;
 
-import java.io.Serializable;
-
-public class Plateau implements Serializable {
+public class Plateau {
 
     private int[][] cases = new int[2][6];
 
@@ -31,6 +29,25 @@ public class Plateau implements Serializable {
 
         return cases[joueur][cell] > 0;
     }
+
+    public void playCell(int joueur, int cell){
+
+        int graines = cases[joueur][cell];
+        cases[joueur][cell] = 0;
+
+        for (int i = cell+1; graines > 0; i++){
+
+            int j = (joueur + i/6)%2;
+            int c = j == joueur ? i%6 : 5 - i%6;
+
+            if (j != joueur && c != cell){
+                cases[j][c]++;
+                graines--;
+            }
+        }
+
+    }
+
 
     public int[][] getCases(){
         return cases;

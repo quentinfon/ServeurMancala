@@ -38,7 +38,9 @@ public class Partie {
         if(j.equals(joueurs[playerTurn])){
             if (plateau.isPlayable(playerTurn, cell)){
 
-                System.out.println("Fonction jouer");
+                System.out.println("Fonction jouer la case : " + cell);
+                plateau.playCell(playerTurn, cell);
+
                 nextPlayer();
 
             }else{
