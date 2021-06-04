@@ -47,11 +47,20 @@ public class Serveur {
     synchronized public void delClient(Joueur joueur)
     {
         _nbClients--;
+        ArrayList<Session> toShutDown = new ArrayList<>();
 
         for(Session session : _sessions){
             if(session.hasPlayer(joueur)){
                 session.userDisconnect(joueur);
+
+                if (session.checkSessionEnd()){
+                    toShutDown.add(session);
+                }
             }
+        }
+
+        for (Session s : toShutDown){
+            _sessions.remove(s);
         }
 
     }
@@ -83,11 +92,15 @@ public class Serveur {
         }
 
         //Création d'une nouvelle session si aucune session libre
-        Session session = new Session();
+        Session session = new Session(this);
         session.addPlayer(joueur, stream);
         _sessions.add(session);
 
         return session;
+    }
+
+    synchronized public void removeSession(Session session){
+        _sessions.remove(session);
     }
 
 

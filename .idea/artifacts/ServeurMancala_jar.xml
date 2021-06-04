@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ServeurMancala:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ServeurMancala_jar</output-path>
+    <root id="archive" name="ServeurMancala.jar">
+      <element id="module-output" name="ServeurMancala" />
+    </root>
+  </artifact>
+</component>

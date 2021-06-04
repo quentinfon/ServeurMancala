@@ -1,5 +1,7 @@
 package ensi.model;
 
+import ensi.Serveur;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -14,7 +16,7 @@ public class Session {
 
     private Partie partie;
 
-    public Session(){
+    public Session(Serveur serveur){
         partie = new Partie();
     }
 
@@ -80,6 +82,22 @@ public class Session {
         return joueurs.size() >= 2;
     }
 
+    /**
+     * Check if a session have to be shut down
+     * @return
+     */
+    public boolean checkSessionEnd(){
+        boolean toDelete = true;
+
+        for(var entry : joueurs.entrySet()) {
+            if(entry.getValue() != null){
+                toDelete = false;
+                break;
+            }
+        }
+
+        return toDelete;
+    }
 
     /**
      * Disconnect a player from a session
@@ -89,6 +107,8 @@ public class Session {
         if (hasPlayer(joueur)){
             joueur.connected = false;
             joueurs.put(joueur, null);
+
+            checkSessionEnd();
             sendGameData();
         }
     }
