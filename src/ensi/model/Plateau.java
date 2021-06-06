@@ -40,7 +40,7 @@ public class Plateau {
             int j = (joueur + i/6)%2;
             int c = j == joueur ? i%6 : 5 - i%6;
 
-            if (j != joueur && c != cell){
+            if (j != joueur || c != cell){
                 cases[j][c]++;
                 graines--;
             }
