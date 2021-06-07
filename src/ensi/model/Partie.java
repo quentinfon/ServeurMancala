@@ -10,10 +10,12 @@ public class Partie {
     public Joueur[] joueurs = new Joueur[2];
     public boolean started;
 
+    public int[] scores = new int[2];
+
     public Partie(){
         playerTurn = 0;
         started = false;
-        plateau = new Plateau();
+        plateau = new Plateau(this);
     }
 
     public void startGame(Joueur j1, Joueur j2){
@@ -58,8 +60,22 @@ public class Partie {
         data.playerTurn = this.playerTurn;
         data.joueurs = this.joueurs;
         data.cases = this.plateau.getCases();
+        data.scores = this.scores;
 
         return data;
+    }
+
+    public int getScore(int joueur){
+        if(joueur >= 0 && joueur <=1){
+            return scores[joueur];
+        }
+        return -1;
+    }
+
+    public void setScore(int joueur, int score){
+        if(joueur >= 0 && joueur <=1){
+            scores[joueur] = score;
+        }
     }
 
 
