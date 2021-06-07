@@ -43,16 +43,28 @@ public class Plateau {
         int j = joueur;
         int c = cell;
 
-        for (int i = cell+1; graines > 0; i++){
-
-            j = (joueur + i/6)%2;
-            c = j == joueur ? i%6 : 5 - i%6;
+        while (graines > 0){
+            if (j == 0){
+                c--;
+                if (c < 0){
+                    c = 0;
+                    j = 1;
+                }
+            }else if (j == 1){
+                c++;
+                if (c > 5){
+                    c = 5;
+                    j = 0;
+                }
+            }
 
             if (j != joueur || c != cell){
                 cases[j][c]++;
                 graines--;
             }
+
         }
+
 
         //TODO Utilisation de la derniere case pour verifier s'il y a des graines à manger et ajouter au score du joueur
         // Manger les graines
