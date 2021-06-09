@@ -69,7 +69,11 @@ public class Plateau {
         //TODO Utilisation de la derniere case pour verifier s'il y a des graines à manger et ajouter au score du joueur
         // Manger les graines
         if(joueur != j){
-            for(int i = c; i<6; i++){
+
+            int i = c;
+
+            while(true){
+
                 if(cases[j][i]==2 | cases[j][i]==3){
                     int score = partie.getScore(joueur) + cases[j][i];
                     cases[j][i] =0;
@@ -77,7 +81,22 @@ public class Plateau {
                 }else{
                     break;
                 }
+
+
+                if (j == 0){
+                    i++;
+                    if (i > 5){
+                        break;
+                    }
+                }else if (j == 1){
+                    i--;
+                    if (i < 0){
+                        break;
+                    }
+                }
+
             }
+
         }
 
 
