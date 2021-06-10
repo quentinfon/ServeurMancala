@@ -84,7 +84,7 @@ public class Session {
 
     /**
      * Check if a session have to be shut down
-     * @return
+     * @return if the seesion have to be delete
      */
     public boolean checkSessionEnd(){
         boolean toDelete = true;

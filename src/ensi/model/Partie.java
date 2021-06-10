@@ -30,7 +30,13 @@ public class Partie {
 
 
     public boolean checkEnd(){
-        return plateau.sumCaseJoueur(playerTurn) == 0;
+
+        if (plateau.sumCaseJoueur(playerTurn) == 0){
+            scores[playerTurn] += plateau.getAllPlayerGraines((playerTurn+1)%2);
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -42,8 +48,9 @@ public class Partie {
 
                 System.out.println("Fonction jouer la case : " + cell);
                 plateau.playCell(playerTurn, cell);
-
                 nextPlayer();
+
+                if(checkEnd()) started = false;
 
             }else{
                 System.out.println("Impossible de jouer cette case");

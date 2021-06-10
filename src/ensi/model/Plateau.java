@@ -31,8 +31,82 @@ public class Plateau {
         if(joueur != 0 && joueur != 1) return false;
         if(cell < 0 || cell > 5) return false;
 
-        return cases[joueur][cell] > 0;
+        if(cases[joueur][cell] <= 0) return false;
+
+        if(sumCaseJoueur((joueur+1)%2) == 0){
+            boolean havePlayableCell = false;
+
+            for (int i = 0; i < 6; i++){
+
+                boolean landingOnOtherPlayer = (i + cases[joueur][i]) >= 6;
+
+                if(landingOnOtherPlayer){
+                    havePlayableCell = true;
+                    break;
+                }
+            }
+
+            if (havePlayableCell && cell + cases[joueur][cell] < 6) return false;
+
+        }
+
+        return true;
     }
+
+
+    /**
+     * Get all the points of a player
+     * @param joueur the player
+     * @return the total of points
+     */
+    public int getAllPlayerGraines(int joueur){
+        if (joueur != 0 && joueur != 1) return -1;
+
+        int total = 0;
+        for(int i = 0; i < 6; i++){
+            total += cases[joueur][i];
+            cases[joueur][i] = 0;
+        }
+
+        return total;
+    }
+
+
+    /**
+     * Regle 7 : Verification de la possibilite de capturer
+     * @param player le joueur
+     * @param cell la case
+     * @return capture possible ou non
+     */
+    public boolean canBeCapture(int player, int cell){
+        int i = cell;
+        int total= 0;
+
+        while(true){
+
+            if(cases[player][i]==2 || cases[player][i]==3){
+                total += cases[player][i];
+            }else{
+                break;
+            }
+
+            if (player == 0){
+                i++;
+                if (i > 5){
+                    break;
+                }
+            } else {
+                i--;
+                if (i < 0){
+                    break;
+                }
+            }
+
+        }
+
+        return total < sumCaseJoueur(player);
+    }
+
 
     public void playCell(int joueur, int cell){
 
@@ -66,15 +140,17 @@ public class Plateau {
         }
 
 
-        //TODO Utilisation de la derniere case pour verifier s'il y a des graines à manger et ajouter au score du joueur
-        // Manger les graines
-        if(joueur != j){
+        //Capture des graines
+        //Regle 7 : : Si un coup devait prendre toutes les graines adverses, alors le coup peut être joué,
+        //mais aucune capture n'est faite
+        if(joueur != j && canBeCapture(j, c)){
 
             int i = c;
 
+
             while(true){
 
-                if(cases[j][i]==2 | cases[j][i]==3){
+                if(cases[j][i]==2 || cases[j][i]==3){
                     int score = partie.getScore(joueur) + cases[j][i];
                     cases[j][i] =0;
                     partie.setScore(joueur, score);
@@ -88,7 +164,7 @@ public class Plateau {
                     if (i > 5){
                         break;
                     }
-                }else if (j == 1){
+                } else {
                     i--;
                     if (i < 0){
                         break;
