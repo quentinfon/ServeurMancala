@@ -10,5 +10,7 @@ public enum Instruction implements Serializable {
     SURRENDER,
     LOAD_GAME,
     OPPONENT_DISCONNECT,
+    YES,
+    NO
 
 }

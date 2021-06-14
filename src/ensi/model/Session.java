@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Session {
 
@@ -83,6 +84,22 @@ public class Session {
     }
 
     /**
+     * Return the opponent
+     * @param j the player
+     * @return opponent
+     */
+    public Map.Entry<Joueur, ObjectOutputStream> getOpponent(Joueur j){
+        if(joueurs.size() >= 2){
+            for(var entry : joueurs.entrySet()) {
+                if(!entry.getKey().equals(j)){
+                    return entry;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check if a session have to be shut down
      * @return if the seesion have to be delete
      */
@@ -120,6 +137,22 @@ public class Session {
      */
     public void request(Commande commande, Joueur joueur){
         if(commande.action == Action.NEW_GAME){
+            if(isFull()){
+
+                var opponent = getOpponent(joueur);
+
+                try {
+                    opponent.getValue().reset();
+                    opponent.getValue().writeObject(new InstructionModel(Instruction.NEW_GAME));
+
+                    //TODO Thread de commande type new game pour une session
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
 
             startNewGame();
 
