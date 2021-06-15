@@ -195,4 +195,8 @@ public class Plateau {
         return cases;
     }
 
+    public void setCases(int[][] cells){
+        cases = cells;
+    }
+
 }

@@ -3,7 +3,6 @@ package ensi.model;
 
 import java.io.*;
 import java.util.Random;
-import java.util.concurrent.atomic.LongAdder;
 
 public class Partie {
 
@@ -98,7 +97,9 @@ public class Partie {
     }
 
     public void load(GameData data){
-        //TODO
+        scores = data.scores;
+        playerTurn = data.playerTurn;
+        plateau.setCases(data.cases);
     }
 
     public void saveGame(){
@@ -130,26 +131,32 @@ public class Partie {
 
     public void loadLastSave(){
 
-        String[] pathnames;
-        File f = new File("mancala_save/");
+        File[] files;
+        File dir = new File("mancala_save/");
 
-        pathnames = f.list();
+        files = dir.listFiles();
 
-        String to_load = "";
-        for (String pathname : pathnames) {
+        File to_load = null;
+        for (File file : files) {
 
-            String[] detail = pathname.split(".");
+            String fileName = file.toString();
+            String extension = "";
 
-            if (detail[detail.length-1].equals("game")){
-                to_load = pathname;
+            int index = fileName.lastIndexOf('.');
+            if(index > 0) {
+                extension= fileName.substring(index + 1);
+            }
+
+            if (extension.equals("game")){
+                to_load = file;
             }
         }
 
-        if(!to_load.equals("")){
+        if(to_load != null){
             FileInputStream fis = null;
             ObjectInputStream ois = null;
             try {
-                fis = new FileInputStream(f);
+                fis = new FileInputStream(to_load);
                 ois = new ObjectInputStream(fis);
                 GameData data = (GameData) ois.readObject();
 

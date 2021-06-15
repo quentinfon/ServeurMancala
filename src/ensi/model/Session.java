@@ -181,6 +181,7 @@ public class Session {
             partie.saveGame();
         } else if(commande.action == Action.LOAD_GAME) {
             partie.loadLastSave();
+            sendGameData();
         }
     }
 
