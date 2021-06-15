@@ -1,7 +1,9 @@
 package ensi.model;
 
 
+import java.io.*;
 import java.util.Random;
+import java.util.concurrent.atomic.LongAdder;
 
 public class Partie {
 
@@ -93,6 +95,81 @@ public class Partie {
         if(joueur >= 0 && joueur <=1){
             scores[joueur] = score;
         }
+    }
+
+    public void load(GameData data){
+        //TODO
+    }
+
+    public void saveGame(){
+
+        File dir = new File("mancala_save/");
+        dir.mkdirs();
+
+        File f = new File("mancala_save/save.game");
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(f);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(getGameData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (oos != null){
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
+
+    public void loadLastSave(){
+
+        String[] pathnames;
+        File f = new File("mancala_save/");
+
+        pathnames = f.list();
+
+        String to_load = "";
+        for (String pathname : pathnames) {
+
+            String[] detail = pathname.split(".");
+
+            if (detail[detail.length-1].equals("game")){
+                to_load = pathname;
+            }
+        }
+
+        if(!to_load.equals("")){
+            FileInputStream fis = null;
+            ObjectInputStream ois = null;
+            try {
+                fis = new FileInputStream(f);
+                ois = new ObjectInputStream(fis);
+                GameData data = (GameData) ois.readObject();
+
+                load(data);
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if(ois != null) {
+                    try {
+                        ois.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+
+
     }
 
 

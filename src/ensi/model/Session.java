@@ -21,6 +21,7 @@ public class Session {
     private Joueur waitingPlayerResponse;
     private Instruction waitingInstruction;
 
+
     public Session(Serveur serveur){
         partie = new Partie();
         waitingAnswer = false;
@@ -176,6 +177,10 @@ public class Session {
                 sendGameData();
             }
 
+        } else if(commande.action == Action.SAVE_GAME) {
+            partie.saveGame();
+        } else if(commande.action == Action.LOAD_GAME) {
+            partie.loadLastSave();
         }
     }
 
