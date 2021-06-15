@@ -1,9 +1,6 @@
 package ensi;
 
-import ensi.model.Commande;
-import ensi.model.GameData;
-import ensi.model.Joueur;
-import ensi.model.Session;
+import ensi.model.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -58,11 +55,17 @@ public class ClientThread implements Runnable {
 
             while(true)
             {
-                Commande commande = (Commande) ois.readObject();
+                Object data = ois.readObject();
 
-                _session.request(commande, _joueur);
-
+                if(data instanceof Commande){
+                    _session.request((Commande) data, _joueur);
+                } else if(data instanceof InstructionModel){
+                    _session.answer_request(((InstructionModel) data).instruction, _joueur);
+                }else{
+                    System.out.println("Unknown data received");
+                }
             }
+
 
         } catch (IOException | ClassNotFoundException e) {
         } finally

@@ -17,8 +17,13 @@ public class Session {
 
     private Partie partie;
 
+    private boolean waitingAnswer;
+    private Joueur waitingPlayerResponse;
+    private Instruction waitingInstruction;
+
     public Session(Serveur serveur){
         partie = new Partie();
+        waitingAnswer = false;
     }
 
     /**
@@ -31,6 +36,7 @@ public class Session {
                 j.add(entry.getKey());
             }
 
+            partie.init_partie();
             partie.startGame(j.get(0), j.get(1));
             sendGameData();
         }
@@ -136,6 +142,15 @@ public class Session {
      * @param joueur the player who request the commande
      */
     public void request(Commande commande, Joueur joueur){
+
+        //Cancel request if requested player don't answer and play
+        if (waitingAnswer){
+            if(joueur.equals(waitingPlayerResponse))
+                waitingAnswer = false;
+            else
+                return;
+        }
+
         if(commande.action == Action.NEW_GAME){
             if(isFull()){
 
@@ -145,22 +160,47 @@ public class Session {
                     opponent.getValue().reset();
                     opponent.getValue().writeObject(new InstructionModel(Instruction.NEW_GAME));
 
-                    //TODO Thread de commande type new game pour une session
-
+                    waitingAnswer = true;
+                    waitingPlayerResponse = opponent.getKey();
+                    waitingInstruction = Instruction.NEW_GAME;
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
             }
-
-            startNewGame();
-
         }else if(commande.action == Action.PLAY){
 
             if (partie != null){
                 partie.playTurn(joueur, commande.numToPlay);
                 sendGameData();
+            }
+
+        }
+    }
+
+    /**
+     * Execute the waiting instruction
+     */
+    public void execute_instruction(){
+        if (waitingInstruction == Instruction.NEW_GAME){
+            startNewGame();
+        }
+    }
+
+    /**
+     * Client response to a question (new game ...)
+     * @param reponse client response
+     * @param joueur client
+     */
+    public void answer_request(Instruction reponse, Joueur joueur){
+        if(waitingAnswer){
+
+            if (joueur.equals(waitingPlayerResponse)) {
+                if (reponse == Instruction.YES) {
+                    execute_instruction();
+                }
+                waitingAnswer = false;
             }
 
         }

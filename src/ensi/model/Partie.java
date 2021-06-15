@@ -1,6 +1,8 @@
 package ensi.model;
 
 
+import java.util.Random;
+
 public class Partie {
 
     public Plateau plateau;
@@ -11,17 +13,25 @@ public class Partie {
     public boolean started;
 
     public int[] scores = new int[2];
+    private Random rand;
 
     public Partie(){
-        playerTurn = 0;
-        started = false;
-        plateau = new Plateau(this);
+        rand = new Random();
+        init_partie();
     }
 
     public void startGame(Joueur j1, Joueur j2){
         joueurs[0] = j1;
         joueurs[1] = j2;
         started = true;
+    }
+
+    public void init_partie(){
+        started = false;
+        playerTurn = rand.nextInt(2);
+        plateau = new Plateau(this);
+        scores[0] = 0;
+        scores[1] = 0;
     }
 
     public void nextPlayer(){
