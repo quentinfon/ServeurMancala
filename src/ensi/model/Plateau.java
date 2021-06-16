@@ -40,7 +40,7 @@ public class Plateau {
 
                 boolean landingOnOtherPlayer;
 
-                if (joueur == 0){
+                if (joueur == 1){
                     landingOnOtherPlayer  = (i + cases[joueur][i]) >= 6;
                 }else{
                     landingOnOtherPlayer  = (i - cases[joueur][i]) < 0;
@@ -53,7 +53,7 @@ public class Plateau {
             }
 
             if (havePlayableCell){
-                if(joueur == 0){
+                if(joueur == 1){
                     return cell + cases[joueur][cell] >= 6;
                 }else{
                     return cell - cases[joueur][cell] < 0;
