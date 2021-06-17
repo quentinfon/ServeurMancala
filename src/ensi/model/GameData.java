@@ -12,6 +12,8 @@ public class GameData implements Serializable {
 
     public int[] scores = new int[2];
 
+    public int[] victories = new int[2];
+
     public String toString(){
 
         StringBuilder affichage = new StringBuilder("");

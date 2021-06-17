@@ -16,6 +16,8 @@ public class Partie {
     public int[] scores = new int[2];
     private Random rand;
 
+    public int[] victories = new int[2];
+
     public Partie(){
         rand = new Random();
         init_partie();
@@ -35,6 +37,14 @@ public class Partie {
         scores[1] = 0;
     }
 
+    public void nextGame(){
+        started = true;
+        playerTurn = rand.nextInt(2);
+        plateau = new Plateau(this);
+        scores[0] = 0;
+        scores[1] = 0;
+    }
+
     public void nextPlayer(){
         playerTurn = playerTurn == 0 ? 1 : 0;
     }
@@ -44,11 +54,28 @@ public class Partie {
 
         if (plateau.sumCaseJoueur(playerTurn) == 0){
             scores[playerTurn] += plateau.getAllPlayerGraines((playerTurn+1)%2);
+            addVictory(scores[playerTurn]>scores[(playerTurn+1)%2] ? playerTurn : (playerTurn+1)%2);
+            return true;
+        }
+        if (scores[playerTurn] >= 25){
+            addVictory(playerTurn);
             return true;
         }
 
         return false;
     }
+
+    public void addVictory(int player){
+        victories[player] += 1;
+    }
+
+    public boolean checkDefinitivEnd(){
+        if(victories[playerTurn] == 6){
+            return true;
+        }
+        return false;
+    }
+
 
 
     public void playTurn(Joueur j, int cell){
@@ -61,7 +88,13 @@ public class Partie {
                 plateau.playCell(playerTurn, cell);
                 nextPlayer();
 
-                if(checkEnd()) started = false;
+                if(checkEnd()) {
+                    if(checkDefinitivEnd()){
+                        started =false;
+                    }else{
+                        nextGame();
+                    }
+                }
 
             }else{
                 System.out.println("Impossible de jouer cette case");
@@ -79,6 +112,7 @@ public class Partie {
         data.joueurs = this.joueurs;
         data.cases = this.plateau.getCases();
         data.scores = this.scores;
+        data.victories = this.victories;
 
         return data;
     }
@@ -96,8 +130,17 @@ public class Partie {
         }
     }
 
+
+    public int getVictories(int joueur){
+        if(joueur >= 0 && joueur <=1){
+            return victories[joueur];
+        }
+        return -1;
+    }
+
     public void load(GameData data){
         scores = data.scores;
+        victories =data.victories;
         playerTurn = data.playerTurn;
         plateau.setCases(data.cases);
     }
