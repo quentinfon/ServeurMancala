@@ -3,7 +3,6 @@ package ensi.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.UUID;
 
 
 public class Joueur implements Serializable
@@ -16,16 +15,16 @@ public class Joueur implements Serializable
 
     public boolean connected;
 
-    public Joueur()
+    public Joueur(String id)
     {
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
         this.action= new ArrayList<>();
         this.connected = true;
     }
 
-    public Joueur(String pseudo, String ip, String port)
+    public Joueur(String id, String pseudo, String ip, String port)
     {
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
         this.pseudo = pseudo;
         this.ip=ip;
         this.port=port;
