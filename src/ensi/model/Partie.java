@@ -18,6 +18,8 @@ public class Partie {
 
     public int[] victories = new int[2];
 
+    public Joueur roundWinner;
+
     public Partie(){
         rand = new Random();
         init_partie();
@@ -54,11 +56,21 @@ public class Partie {
 
         if (plateau.sumCaseJoueur(playerTurn) == 0){
             scores[playerTurn] += plateau.getAllPlayerGraines((playerTurn+1)%2);
-            addVictory(scores[playerTurn]>scores[(playerTurn+1)%2] ? playerTurn : (playerTurn+1)%2);
+
+            int gagnant = scores[playerTurn] > scores[(playerTurn+1)%2] ? playerTurn : (playerTurn+1)%2;
+            roundWinner = joueurs[gagnant];
+            addVictory(gagnant);
             return true;
         }
         if (scores[playerTurn] >= 25){
+            roundWinner = joueurs[playerTurn];
             addVictory(playerTurn);
+            return true;
+        }
+
+        //match null
+        if (scores[playerTurn] <= 24 && scores[(playerTurn+1)%2] <= 24 && plateau.sumBoard() < 6){
+            roundWinner = null;
             return true;
         }
 
@@ -77,24 +89,21 @@ public class Partie {
     }
 
 
-
-    public void playTurn(Joueur j, int cell){
-        if(!started) return;
+    /**
+     * Function to play
+     * @param j the player
+     * @param cell the cell
+     * @return if the play has been done
+     */
+    public boolean playTurn(Joueur j, int cell){
+        if(!started) return false;
 
         if(j.equals(joueurs[playerTurn])){
             if (plateau.isPlayable(playerTurn, cell)){
 
                 System.out.println("Fonction jouer la case : " + cell);
                 plateau.playCell(playerTurn, cell);
-                nextPlayer();
-
-                if(checkEnd()) {
-                    if(checkDefinitivEnd()){
-                        started =false;
-                    }else{
-                        nextGame();
-                    }
-                }
+                return true;
 
             }else{
                 System.out.println("Impossible de jouer cette case");
@@ -103,6 +112,7 @@ public class Partie {
             System.out.println("Ce n'est pas le tour de ce client");
         }
 
+        return false;
     }
 
     public GameData getGameData(){

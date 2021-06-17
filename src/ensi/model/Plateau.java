@@ -19,6 +19,16 @@ public class Plateau {
 
     }
 
+    public int sumBoard(){
+        int count = 0;
+        for (int j = 0; j < 2; j++){
+            for (int i = 0; i < 6; i++){
+                count += cases[j][i];
+            }
+        }
+        return count;
+    }
+
     public int sumCaseJoueur(int numJoueur){
         int count = 0;
         for (int i = 0; i < 6; i++){

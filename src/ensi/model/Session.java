@@ -152,36 +152,85 @@ public class Session {
                 return;
         }
 
-        if(commande.action == Action.NEW_GAME){
-            if(isFull()){
-
-                var opponent = getOpponent(joueur);
-
-                try {
-                    opponent.getValue().reset();
-                    opponent.getValue().writeObject(new InstructionModel(Instruction.NEW_GAME));
-
-                    waitingAnswer = true;
-                    waitingPlayerResponse = opponent.getKey();
-                    waitingInstruction = Instruction.NEW_GAME;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }else if(commande.action == Action.PLAY){
+        if(commande.action == Action.PLAY){
 
             if (partie != null){
-                partie.playTurn(joueur, commande.numToPlay);
-                sendGameData();
+
+                boolean havePlayed = partie.playTurn(joueur, commande.numToPlay);
+
+                if(havePlayed) {
+                    //Envoie du gagnant de la partie et du match
+                    if (partie.checkEnd()) {
+                        if (partie.checkDefinitivEnd()) {
+                            partie.started = false;
+
+                            if (partie.roundWinner != null)
+                                sendInfoToClients(new InstructionModel(Instruction.END_OF_MATCH, partie.roundWinner.id));
+                        } else {
+                            partie.nextGame();
+
+                            if (partie.roundWinner != null){
+                                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, partie.roundWinner.id));
+                            }else{
+                                //match null
+                                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, ""));
+                            }
+
+                        }
+                    }
+
+                    partie.nextPlayer();
+
+                    sendGameData();
+                }
             }
 
-        } else if(commande.action == Action.SAVE_GAME) {
-            partie.saveGame();
-        } else if(commande.action == Action.LOAD_GAME) {
-            partie.loadLastSave();
-            sendGameData();
+        }else {
+
+            Instruction demande = null;
+
+            switch (commande.action){
+                case NEW_GAME:
+                    demande = Instruction.NEW_GAME;
+                    break;
+                case SAVE_GAME:
+                    demande = Instruction.SAVE_GAME;
+                    break;
+                case LOAD_GAME:
+                    demande = Instruction.LOAD_GAME;
+                    break;
+                case SURRENDER:
+                    demande = Instruction.SURRENDER;
+                    break;
+                default:
+                    break;
+            }
+
+            if(demande != null){
+                //If two player are connected
+                if (isFull()){
+                    var opponent = getOpponent(joueur);
+                    try {
+                        opponent.getValue().reset();
+                        opponent.getValue().writeObject(new InstructionModel(demande));
+
+                        waitingAnswer = true;
+                        waitingPlayerResponse = opponent.getKey();
+                        waitingInstruction = demande;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    if (demande == Instruction.NEW_GAME){
+                        startNewGame();
+                    } else if (demande == Instruction.SAVE_GAME){
+                        partie.saveGame();
+                    }
+
+                }
+            }
+
         }
     }
 
@@ -191,6 +240,12 @@ public class Session {
     public void execute_instruction(){
         if (waitingInstruction == Instruction.NEW_GAME){
             startNewGame();
+        }else if(waitingInstruction == Instruction.LOAD_GAME){
+            partie.loadLastSave();
+        } else if(waitingInstruction == Instruction.SAVE_GAME){
+            partie.saveGame();
+        } else if(waitingInstruction == Instruction.SURRENDER){
+            //TODO
         }
     }
 
@@ -207,6 +262,7 @@ public class Session {
                     execute_instruction();
                 }
                 waitingAnswer = false;
+                sendGameData();
             }
 
         }
@@ -244,6 +300,18 @@ public class Session {
                 entry.getValue().writeObject(getData());
             } catch (NullPointerException | IOException e) {
 
+            }
+        }
+    }
+
+
+    public void sendInfoToClients(InstructionModel info){
+        if (partie == null) return;
+        for(var entry : joueurs.entrySet()) {
+            try {
+                entry.getValue().reset();
+                entry.getValue().writeObject(info);
+            } catch (NullPointerException | IOException e) {
             }
         }
     }
