@@ -148,6 +148,23 @@ public class Partie {
         return -1;
     }
 
+    /**
+     * Function to surrender a round
+     * @param joueur the player that want surrend
+     * @return true if have successfully surrender
+     */
+    public boolean surrender(Joueur joueur){
+
+        if (joueurs[playerTurn].equals(joueur)){
+            roundWinner = joueurs[(playerTurn+1)%2];
+            addVictory((playerTurn+1)%2);
+            return true;
+        }
+
+        return false;
+    }
+
+
     public void load(GameData data){
         scores = data.scores;
         victories =data.victories;

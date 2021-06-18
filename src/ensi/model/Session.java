@@ -170,7 +170,20 @@ public class Session {
                 }
             }
 
-        }else {
+        } else if (commande.action == Action.SURRENDER){
+
+            if(partie != null && partie.started){
+
+                boolean hasSurrender = partie.surrender(joueur);
+
+                if (hasSurrender){
+                    sendEndGameInformation();
+                    sendGameData();
+                }
+
+            }
+
+        } else {
 
             Instruction demande = null;
 
