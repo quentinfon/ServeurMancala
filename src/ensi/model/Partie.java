@@ -182,6 +182,20 @@ public class Partie {
 
     }
 
+    public void splitLastPoints(){
+        int point = plateau.sumBoard()/2;
+        scores[0] += point;
+        scores[1] += point;
+
+        if(scores[0] == scores[1]){
+            roundWinner = null;
+        }else{
+            int winner = scores[0]>scores[1] ? 0 : 1;
+            roundWinner = joueurs[winner];
+        }
+    }
+
+
     public void loadLastSave(){
 
         File[] files;
@@ -231,6 +245,4 @@ public class Partie {
 
 
     }
-
-
 }

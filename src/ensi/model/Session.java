@@ -161,22 +161,7 @@ public class Session {
                 if(havePlayed) {
                     //Envoie du gagnant de la partie et du match
                     if (partie.checkEnd()) {
-                        if (partie.checkDefinitivEnd()) {
-                            partie.started = false;
-
-                            if (partie.roundWinner != null)
-                                sendInfoToClients(new InstructionModel(Instruction.END_OF_MATCH, partie.roundWinner.id));
-                        } else {
-                            partie.nextGame();
-
-                            if (partie.roundWinner != null){
-                                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, partie.roundWinner.id));
-                            }else{
-                                //match null
-                                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, ""));
-                            }
-
-                        }
+                        sendEndGameInformation();
                     }
 
                     partie.nextPlayer();
@@ -199,8 +184,8 @@ public class Session {
                 case LOAD_GAME:
                     demande = Instruction.LOAD_GAME;
                     break;
-                case SURRENDER:
-                    demande = Instruction.SURRENDER;
+                case SPLIT_LAST_POINTS:
+                    demande = Instruction.SPLIT_LAST_POINTS;
                     break;
                 default:
                     break;
@@ -244,8 +229,28 @@ public class Session {
             partie.loadLastSave();
         } else if(waitingInstruction == Instruction.SAVE_GAME){
             partie.saveGame();
-        } else if(waitingInstruction == Instruction.SURRENDER){
-            //TODO
+        } else if(waitingInstruction == Instruction.SPLIT_LAST_POINTS && partie.plateau.sumBoard()<10){
+            partie.splitLastPoints();
+            sendEndGameInformation();
+        }
+    }
+
+    public void sendEndGameInformation() {
+        if (partie.checkDefinitivEnd()) {
+            partie.started = false;
+
+            if (partie.roundWinner != null)
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_MATCH, partie.roundWinner.id));
+        } else {
+            partie.nextGame();
+
+            if (partie.roundWinner != null){
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, partie.roundWinner.id));
+            }else{
+                //match null
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, ""));
+            }
+
         }
     }
 
