@@ -217,6 +217,7 @@ public class Partie {
         }else{
             int winner = scores[0]>scores[1] ? 0 : 1;
             roundWinner = joueurs[winner];
+            addVictory(winner, scores[winner]);
         }
     }
 
