@@ -253,15 +253,15 @@ public class Session {
             partie.started = false;
 
             if (partie.roundWinner != null)
-                sendInfoToClients(new InstructionModel(Instruction.END_OF_MATCH, partie.roundWinner.id));
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_MATCH, partie.roundWinner.id, ScoreManager.getScoreManager().getScores()));
         } else {
             partie.nextGame();
 
             if (partie.roundWinner != null){
-                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, partie.roundWinner.id));
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, partie.roundWinner.id, ScoreManager.getScoreManager().getScores()));
             }else{
                 //match null
-                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, ""));
+                sendInfoToClients(new InstructionModel(Instruction.END_OF_GAME, "", ScoreManager.getScoreManager().getScores()));
             }
 
         }

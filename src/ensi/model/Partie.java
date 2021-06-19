@@ -59,12 +59,12 @@ public class Partie {
 
             int gagnant = scores[playerTurn] > scores[(playerTurn+1)%2] ? playerTurn : (playerTurn+1)%2;
             roundWinner = joueurs[gagnant];
-            addVictory(gagnant);
+            addVictory(gagnant, scores[gagnant]);
             return true;
         }
         if (scores[playerTurn] >= 25){
             roundWinner = joueurs[playerTurn];
-            addVictory(playerTurn);
+            addVictory(playerTurn, scores[playerTurn]);
             return true;
         }
 
@@ -77,8 +77,9 @@ public class Partie {
         return false;
     }
 
-    public void addVictory(int player){
+    public void addVictory(int player, int score){
         victories[player] += 1;
+        ScoreManager.getScoreManager().addScore(joueurs[player].pseudo, score);
     }
 
     public boolean checkDefinitivEnd(){
@@ -157,7 +158,7 @@ public class Partie {
 
         if (joueurs[playerTurn].equals(joueur)){
             roundWinner = joueurs[(playerTurn+1)%2];
-            addVictory((playerTurn+1)%2);
+            addVictory((playerTurn+1)%2, scores[(playerTurn+1)%2]);
             return true;
         }
 
