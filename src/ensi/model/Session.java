@@ -183,6 +183,18 @@ public class Session {
 
             }
 
+        } else if (commande.action == Action.UNDO_MOVE){
+
+            if(partie != null && partie.started){
+
+                if (!partie.joueurs[partie.playerTurn].equals(joueur)){
+                    partie.undoPlay();
+                    sendGameData();
+                    sendInfoToOpponent(joueur, new InstructionModel(Instruction.UNDO_MOVE));
+                }
+
+            }
+
         } else {
 
             Instruction demande = null;
@@ -331,6 +343,16 @@ public class Session {
                 entry.getValue().writeObject(info);
             } catch (NullPointerException | IOException e) {
             }
+        }
+    }
+
+
+    public void sendInfoToOpponent(Joueur j, InstructionModel info){
+        if (partie == null) return;
+        try {
+            getOpponent(j).getValue().reset();
+            getOpponent(j).getValue().writeObject(info);
+        } catch (NullPointerException | IOException e) {
         }
     }
 

@@ -13,6 +13,7 @@ public enum Instruction implements Serializable {
     LOAD_GAME,
     OPPONENT_DISCONNECT,
     YES,
-    NO
+    NO,
+    UNDO_MOVE
 
 }

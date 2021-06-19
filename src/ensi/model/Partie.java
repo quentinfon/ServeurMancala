@@ -2,6 +2,7 @@ package ensi.model;
 
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Partie {
@@ -20,6 +21,9 @@ public class Partie {
 
     public Joueur roundWinner;
 
+    private ArrayList<Integer> moves;
+    private int firstPlayer;
+
     public Partie(){
         rand = new Random();
         init_partie();
@@ -37,6 +41,8 @@ public class Partie {
         plateau = new Plateau(this);
         scores[0] = 0;
         scores[1] = 0;
+        firstPlayer = playerTurn;
+        moves = new ArrayList<>();
     }
 
     public void nextGame(){
@@ -104,6 +110,7 @@ public class Partie {
 
                 System.out.println("Fonction jouer la case : " + cell);
                 plateau.playCell(playerTurn, cell);
+                moves.add(cell);
                 return true;
 
             }else{
@@ -213,6 +220,14 @@ public class Partie {
         }
     }
 
+    public void undoPlay(){
+        if (moves != null && moves.size() > 0){
+            moves.remove(moves.size()-1);
+
+            plateau.setBoardWithMoves(moves, firstPlayer);
+            playerTurn = (playerTurn+1)%2;
+        }
+    }
 
     public void loadLastSave(){
 

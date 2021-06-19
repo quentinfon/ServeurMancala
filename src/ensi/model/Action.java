@@ -9,6 +9,7 @@ public enum Action implements Serializable {
     SAVE_GAME,
     LOAD_GAME,
     SURRENDER,
-    SPLIT_LAST_POINTS
+    SPLIT_LAST_POINTS,
+    UNDO_MOVE
 
 }

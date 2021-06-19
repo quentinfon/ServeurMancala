@@ -1,5 +1,7 @@
 package ensi.model;
 
+import java.util.ArrayList;
+
 public class Plateau {
 
     private int[][] cases = new int[2][6];
@@ -207,6 +209,20 @@ public class Plateau {
 
     public void setCases(int[][] cells){
         cases = cells;
+    }
+
+
+    public void setBoardWithMoves(ArrayList<Integer> moves, int firstPlayer){
+        initPlateau();
+        int player = firstPlayer;
+
+        partie.setScore(0, 0);
+        partie.setScore(1, 0);
+
+        for(int cell : moves){
+            playCell(player, cell);
+            player = (player+1)%2;
+        }
     }
 
 }
