@@ -38,6 +38,7 @@ public class Session {
             }
 
             partie.init_partie();
+            partie.resetVictory();
             partie.startGame(j.get(0), j.get(1));
             sendGameData();
         }
@@ -260,6 +261,9 @@ public class Session {
         }
     }
 
+    /**
+     * Send the winner of a round to the clients
+     */
     public void sendEndGameInformation() {
         if (partie.checkDefinitivEnd()) {
             partie.started = false;
@@ -334,7 +338,10 @@ public class Session {
         }
     }
 
-
+    /**
+     * Send instruction to clients
+     * @param info the data
+     */
     public void sendInfoToClients(InstructionModel info){
         if (partie == null) return;
         for(var entry : joueurs.entrySet()) {
@@ -346,7 +353,11 @@ public class Session {
         }
     }
 
-
+    /**
+     * Send data to opponent
+     * @param j the player that send the request
+     * @param info the information
+     */
     public void sendInfoToOpponent(Joueur j, InstructionModel info){
         if (partie == null) return;
         try {

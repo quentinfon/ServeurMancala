@@ -29,12 +29,28 @@ public class Partie {
         init_partie();
     }
 
+    /**
+     * Start the game
+     * @param j1 player 1
+     * @param j2 player 2
+     */
     public void startGame(Joueur j1, Joueur j2){
         joueurs[0] = j1;
         joueurs[1] = j2;
         started = true;
     }
 
+    /**
+     * Reset the victory number
+     */
+    public void resetVictory(){
+        victories[0] = 0;
+        victories[1] = 0;
+    }
+
+    /**
+     * Initialize a game
+     */
     public void init_partie(){
         started = false;
         playerTurn = rand.nextInt(2);
@@ -45,6 +61,9 @@ public class Partie {
         moves = new ArrayList<>();
     }
 
+    /**
+     * Launch the next game
+     */
     public void nextGame(){
         started = true;
         playerTurn = rand.nextInt(2);
@@ -55,11 +74,17 @@ public class Partie {
         moves = new ArrayList<>();
     }
 
+    /**
+     * Change the player turn to opponent
+     */
     public void nextPlayer(){
         playerTurn = playerTurn == 0 ? 1 : 0;
     }
 
-
+    /**
+     * Check if it's the end of the game
+     * @return true if end of game else false
+     */
     public boolean checkEnd(){
 
         if (plateau.sumCaseJoueur(playerTurn) == 0){
@@ -85,11 +110,20 @@ public class Partie {
         return false;
     }
 
+    /**
+     * Add victory to a player
+     * @param player the player
+     * @param score the score of the player at the end of the game
+     */
     public void addVictory(int player, int score){
         victories[player] += 1;
         ScoreManager.getScoreManager().addScore(joueurs[player].pseudo, score);
     }
 
+    /**
+     * Check if a player have 6 victory
+     * @return true if end of match else false
+     */
     public boolean checkDefinitivEnd(){
         if(victories[playerTurn] == 6){
             return true;
@@ -125,6 +159,10 @@ public class Partie {
         return false;
     }
 
+    /**
+     * Return the data of the game
+     * @return GameData object with all infos of the game
+     */
     public GameData getGameData(){
         GameData data = new GameData();
 
@@ -137,6 +175,11 @@ public class Partie {
         return data;
     }
 
+    /**
+     * Get the score of a player
+     * @param joueur the player
+     * @return the score
+     */
     public int getScore(int joueur){
         if(joueur >= 0 && joueur <=1){
             return scores[joueur];
@@ -144,13 +187,22 @@ public class Partie {
         return -1;
     }
 
+    /**
+     * Set the score of a player
+     * @param joueur the player
+     * @param score the score
+     */
     public void setScore(int joueur, int score){
         if(joueur >= 0 && joueur <=1){
             scores[joueur] = score;
         }
     }
 
-
+    /**
+     * Get the victory number of a player
+     * @param joueur the player
+     * @return the number of victory
+     */
     public int getVictories(int joueur){
         if(joueur >= 0 && joueur <=1){
             return victories[joueur];
@@ -174,7 +226,10 @@ public class Partie {
         return false;
     }
 
-
+    /**
+     * Load a game with a datagame object
+     * @param data the data of the game
+     */
     public void load(GameData data){
         scores = data.scores;
         victories =data.victories;
@@ -182,6 +237,9 @@ public class Partie {
         plateau.setCases(data.cases);
     }
 
+    /**
+     * Save the game into a file
+     */
     public void saveGame(){
 
         File dir = new File("mancala_save/");
@@ -209,6 +267,9 @@ public class Partie {
 
     }
 
+    /**
+     * Split last points of a round
+     */
     public void splitLastPoints(){
         int point = plateau.sumBoard()/2;
         scores[0] += point;
@@ -223,6 +284,9 @@ public class Partie {
         }
     }
 
+    /**
+     * Undo the last play
+     */
     public void undoPlay(){
         if (moves != null && moves.size() > 0){
             moves.remove(moves.size()-1);
@@ -232,6 +296,9 @@ public class Partie {
         }
     }
 
+    /**
+     * Load the last saved file
+     */
     public void loadLastSave(){
 
         File[] files;
