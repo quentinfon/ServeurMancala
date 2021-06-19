@@ -51,6 +51,8 @@ public class Partie {
         plateau = new Plateau(this);
         scores[0] = 0;
         scores[1] = 0;
+        firstPlayer = playerTurn;
+        moves = new ArrayList<>();
     }
 
     public void nextPlayer(){
