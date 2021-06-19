@@ -7,12 +7,6 @@ public class Plateau {
     private int[][] cases = new int[2][6];
     private Partie partie;
 
-    private void initPlateau(){
-        for (int i = 0; i < 6; i++){
-            cases[0][i] = 4;
-            cases[1][i] = 4;
-        }
-    }
 
     public Plateau(Partie p){
 
@@ -21,6 +15,20 @@ public class Plateau {
 
     }
 
+    /**
+     * Initialize the board
+     */
+    private void initPlateau(){
+        for (int i = 0; i < 6; i++){
+            cases[0][i] = 4;
+            cases[1][i] = 4;
+        }
+    }
+
+    /**
+     * The total seed on the board
+     * @return total seed number on the board
+     */
     public int sumBoard(){
         int count = 0;
         for (int j = 0; j < 2; j++){
@@ -31,6 +39,11 @@ public class Plateau {
         return count;
     }
 
+    /**
+     * Total seed of a player on his board
+     * @param numJoueur the player
+     * @return total of seed
+     */
     public int sumCaseJoueur(int numJoueur){
         int count = 0;
         for (int i = 0; i < 6; i++){
@@ -39,6 +52,12 @@ public class Plateau {
         return count;
     }
 
+    /**
+     * Return if a cell is playable
+     * @param joueur the player that wanna play
+     * @param cell the cell he want to play
+     * @return true if it's playable else false
+     */
     public boolean isPlayable(int joueur, int cell){
         if(joueur != 0 && joueur != 1) return false;
         if(cell < 0 || cell > 5) return false;
@@ -77,7 +96,6 @@ public class Plateau {
         return true;
     }
 
-
     /**
      * Get all the points of a player
      * @param joueur the player
@@ -94,7 +112,6 @@ public class Plateau {
 
         return total;
     }
-
 
     /**
      * Regle 7 : Verification de la possibilite de capturer
@@ -131,7 +148,11 @@ public class Plateau {
         return total < sumCaseJoueur(player);
     }
 
-
+    /**
+     * Play a cell of the board
+     * @param joueur the player that play
+     * @param cell the cell he play
+     */
     public void playCell(int joueur, int cell){
 
         int graines = cases[joueur][cell];
@@ -202,16 +223,27 @@ public class Plateau {
 
     }
 
-
+    /**
+     * Get the board
+     * @return the cells
+     */
     public int[][] getCases(){
         return cases;
     }
 
+    /**
+     * Set the board
+     * @param cells the cells of the board
+     */
     public void setCases(int[][] cells){
         cases = cells;
     }
 
-
+    /**
+     * Create a board from a list of moves
+     * @param moves the list of moves
+     * @param firstPlayer the first player
+     */
     public void setBoardWithMoves(ArrayList<Integer> moves, int firstPlayer){
         initPlateau();
         int player = firstPlayer;

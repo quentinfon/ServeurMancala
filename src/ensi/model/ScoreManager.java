@@ -19,6 +19,11 @@ public class ScoreManager implements Serializable {
         loadScores();
     }
 
+    /**
+     * Add a score to the score list
+     * @param pseudo the pseudo of the winner
+     * @param score the score of the winner
+     */
     public void addScore(String pseudo, int score){
         if(scores.size() <= 100){
             scores.add(new Score(pseudo, score));
@@ -26,6 +31,9 @@ public class ScoreManager implements Serializable {
         }
     }
 
+    /**
+     * Load the score from a file
+     */
     public void loadScores(){
         File file = new File("mancala_save/scores.game");
 
@@ -55,6 +63,9 @@ public class ScoreManager implements Serializable {
         }
     }
 
+    /**
+     * Save the scores into a file
+     */
     public void saveScores(){
 
         File dir = new File("mancala_save/");
@@ -81,6 +92,10 @@ public class ScoreManager implements Serializable {
 
     }
 
+    /**
+     * Get the list of scores
+     * @return the list of scores
+     */
     public ArrayList<Score> getScores() {
         return scores;
     }

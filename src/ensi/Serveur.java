@@ -44,6 +44,10 @@ public class Serveur {
 
     }
 
+    /**
+     * Remove a player
+     * @param joueur the player to remove
+     */
     synchronized public void delClient(Joueur joueur)
     {
         _nbClients--;
@@ -99,16 +103,26 @@ public class Serveur {
         return session;
     }
 
+    /**
+     * Remove a session of the server
+     * @param session the session to remove
+     */
     synchronized public void removeSession(Session session){
         _sessions.remove(session);
     }
 
-
+    /**
+     * Return the number of client on the server
+     * @return number of client
+     */
     synchronized public int getNbClients()
     {
         return _nbClients;
     }
 
+    /**
+     * Display the informations of the server
+     */
     synchronized public void displayServerStatus(){
         System.out.println("\n\n\n#############################################");
         System.out.println(_nbClients + " connéctés");
